@@ -1,17 +1,43 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-        for (int i = 2; i <= 10; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+public class Main
+{
+    public static void main(String[] args)
+    {
+        // NOTE: Connection and Statement are AutoCloseable.
+        //       Don't forget to close them both in order to avoid leaks.
+        try
+                (
+                        // create a database connection
+                        Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+                        Statement statement = connection.createStatement();
+                )
+        {
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+
+            statement.executeUpdate("drop table if exists person");
+            statement.executeUpdate("create table person (id integer, name string)");
+            statement.executeUpdate("insert into person values(1, 'leo')");
+            statement.executeUpdate("insert into person values(2, 'yui')");
+            ResultSet rs = statement.executeQuery("select * from person");
+            while(rs.next())
+            {
+                // read the result set
+                System.out.println("name = " + rs.getString("name"));
+                System.out.println("id = " + rs.getInt("id"));
+            }
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            e.printStackTrace(System.err);
         }
     }
 }
