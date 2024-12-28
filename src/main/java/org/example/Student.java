@@ -51,5 +51,11 @@ public class Student{
             throw new IllegalArgumentException("ID studenta nie moze byc puste");
         }
     }
+    public void displayInfo() {
+        System.out.println("Imię: " + name);
+        System.out.println("Wiek: " + age);
+        System.out.println("Ocena: " + grade);
+        System.out.println("ID studenta: " + studentID);
+    }
 
 }
