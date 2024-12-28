@@ -18,7 +18,7 @@ public class Student{
         if (name != null && !name.isEmpty()) {
             this.name = name;
         }else {
-            throw new IllegalArgumentException("imie nie moze byc puste");
+            throw new IllegalArgumentException("Imie nie moze byc puste");
         }
     }
     public int getAge() {
@@ -28,7 +28,7 @@ public class Student{
         if (age > 0) {
             this.age = age;
         }else {
-            throw new IllegalArgumentException("wiek musi byc liczba dodatnia calkowia");
+            throw new IllegalArgumentException("Wiek musi byc liczba dodatnia calkowita");
         }
     }
     public double getGrade(){
@@ -38,7 +38,7 @@ public class Student{
         if (grade >= 0.0 && grade <= 100.0){
             this.grade = grade;
         }else {
-            throw new IllegalArgumentException("ocena musi byc w zakresie od 0  do 100");
+            throw new IllegalArgumentException("Ocena musi byc w zakresie od 0  do 100");
         }
     }
     public String getStudentID(){
@@ -48,7 +48,7 @@ public class Student{
         if (studentID != null && !studentID.isEmpty()) {
             this.studentID = studentID;
         }else {
-            throw new IllegalArgumentException("ID studenta nie moze byc piuste");
+            throw new IllegalArgumentException("ID studenta nie moze byc puste");
         }
     }
 
