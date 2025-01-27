@@ -1,52 +1,85 @@
 package org.example;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class StudentManagerImpl implements StudentManager {
-    private ArrayList<Student> students = new ArrayList<>();
+    public StudentManagerImpl(){
+        try(StudentTable studentTable = new StudentTable())
+        {
+            studentTable.createTableIfNotExists();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace(System.err);
+        }
+    }
 
     @Override
     public void addStudent(Student student){
-        students.add(student);
-        System.out.println("Dodano studenta: " + student.getName());
-    }
-
-    @Override
-    public void removeStudent(String studentID) {
-        boolean found = false;
-        for (Student student : students) {
-            if (student.getStudentID().equals(studentID)) {
-                students.remove(student);
-                System.out.println("Usunięto studenta o ID: " + studentID);
-                found = true;
-                break;
-            }
+        try(StudentTable studentTable = new StudentTable())
+        {
+            studentTable.addStudent(student);
         }
-        if (!found) {
-            System.out.println("Student o ID " + studentID + " nie został znaleziony.");
+        catch (SQLException e)
+        {
+            e.printStackTrace(System.err);
         }
     }
 
     @Override
-    public void updateStudent(String studentID) {
-        for (Student student : students) {
-            if (student.getStudentID().equals(studentID)) {
-                // Wprowadź zmiany - dla przykładu zmienimy tylko ocenę
-                student.setGrade(student.getGrade() + 5); // Przykład: dodajemy 5 punktów do oceny
-                System.out.println("Zaktualizowano dane studenta o ID: " + studentID);
-                return;
-            }
+    public void removeStudent(int studentId) {
+        try(StudentTable studentTable = new StudentTable())
+        {
+            studentTable.removeStudent(studentId);
         }
-        System.out.println("Student o ID " + studentID + " nie został znaleziony.");
+        catch (SQLException e)
+        {
+            e.printStackTrace(System.err);
+        }
     }
 
     @Override
-    public ArrayList<Student> displayAllStudents() {
-        return students;
+    public void updateStudent(Student student) {
+        try(StudentTable studentTable = new StudentTable())
+        {
+            studentTable.updateStudent(student);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace(System.err);
+        }
+    }
+
+    @Override
+    public Student getStudent(int studentId) {
+        try(StudentTable studentTable = new StudentTable())
+        {
+            return studentTable.getStudent(studentId);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        return null;
+    }
+
+    @Override
+    public ArrayList<Student> getAllStudents() {
+        try(StudentTable studentTable = new StudentTable())
+        {
+            return studentTable.getStudents();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        return new ArrayList<Student>();
     }
 
     @Override
     public double calculateAverageGrade() {
+        ArrayList<Student> students = this.getAllStudents();
         if (students.isEmpty()) {
             return 0.0;
         }
