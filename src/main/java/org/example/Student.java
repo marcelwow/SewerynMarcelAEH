@@ -1,7 +1,5 @@
 package org.example;
 
-import java.util.Date;
-
 public class Student{
     private int studentId;
     private String firstName;
