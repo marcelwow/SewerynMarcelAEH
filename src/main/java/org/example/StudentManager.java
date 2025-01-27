@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
     public interface StudentManager {
     void addStudent(Student student);
-    void removeStudent(String studentID);
-    void updateStudent(String studentID);
-    ArrayList<Student> displayAllStudents();
+    void removeStudent(int studentId);
+    void updateStudent(Student student);
+    Student getStudent(int studentId);
+    ArrayList<Student> getAllStudents();
     double calculateAverageGrade();
     }
