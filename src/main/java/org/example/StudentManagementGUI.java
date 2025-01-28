@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.awt.Dimension;
 
 public class StudentManagementGUI extends JFrame {
     private JTextField studentIDField, nameField, ageField, gradeField;
@@ -12,11 +13,11 @@ public class StudentManagementGUI extends JFrame {
     public StudentManagementGUI() {
         // Ustawienia okna
         setTitle("Student Management System");
-        setSize(600, 400);
+        setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Inicjalizacja managera studentów
+        // Inicjalizacja managera studentów 
         manager = new StudentManagerImpl();
 
         // Panel wejściowy
@@ -42,10 +43,15 @@ public class StudentManagementGUI extends JFrame {
 
         // Przyciski
         JButton addButton = new JButton("Add Student");
+        addButton.setPreferredSize(new Dimension(50, 50));
         JButton removeButton = new JButton("Remove Student");
+        addButton.setPreferredSize(new Dimension(50, 50));
         JButton updateButton = new JButton("Update Student");
+        addButton.setPreferredSize(new Dimension(50, 50));
         JButton displayButton = new JButton("Display All Students");
+        addButton.setPreferredSize(new Dimension(50, 50));
         JButton calculateButton = new JButton("Calculate Average");
+        addButton.setPreferredSize(new Dimension(50, 50));
 
         // Dodawanie przycisków
         inputPanel.add(addButton);
