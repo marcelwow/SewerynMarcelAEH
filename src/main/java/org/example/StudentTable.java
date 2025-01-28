@@ -46,11 +46,11 @@ public class StudentTable implements AutoCloseable {
     public void updateStudent(Student student) throws SQLException {
         String sql = """
                 UPDATE Student
-                SET first_name = ?,
-                last_name = ?,
+                SET firstName = ?,
+                lastName = ?,
                 age = ?,
                 grade = ?
-                WHERE student_id = ?;
+                WHERE studentId = ?;
                 """;
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setString(1, student.getFirstName());
