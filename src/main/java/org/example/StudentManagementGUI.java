@@ -89,10 +89,7 @@ public class StudentManagementGUI extends JFrame {
             manager.addStudent(new Student(firstName, lastName, age, grade));
             outputArea.setText("Dodanie studenta zakończone powodzeniem");
 
-            firstNameField.setText("");
-            lastNameField.setText("");
-            ageField.setText("");
-            gradeField.setText("");
+            cleanUpInputFields();
         } catch (IllegalArgumentException ex) {
             outputArea.setText(ex.toString());
         }
@@ -117,13 +114,26 @@ public class StudentManagementGUI extends JFrame {
         int studentId = Integer.parseInt(studentIdField.getText());
         manager.removeStudent(studentId);
         outputArea.setText("Student with ID " + studentId + " removed (if existed).");
+        cleanUpInputFields();
     }
 
     private void updateStudent() {
         int studentId = Integer.parseInt(studentIdField.getText());
         Student student = manager.getStudent(studentId);
+
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
+        int age = Integer.parseInt(ageField.getText());
+        double grade = getGrade(age);
+
+        student.setFirstName(firstName);
+        student.setLastName(lastName);
+        student.setAge(age);
+        student.setGrade(grade);
+
         manager.updateStudent(student);
         outputArea.setText("Student with ID " + studentId + " updated (if existed).");
+        cleanUpInputFields();
     }
 
     private void displayAllStudents() {
@@ -138,6 +148,14 @@ public class StudentManagementGUI extends JFrame {
     private void calculateAverage() {
         double average = manager.calculateAverageGrade();
         outputArea.setText("Average Grade: " + average);
+    }
+
+    private void cleanUpInputFields(){
+        studentIdField.setText("");
+        firstNameField.setText("");
+        lastNameField.setText("");
+        ageField.setText("");
+        gradeField.setText("");
     }
 
     public static void main(String[] args) {
