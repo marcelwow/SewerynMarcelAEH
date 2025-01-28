@@ -1,61 +1,88 @@
 package org.example;
 
 public class Student{
-    private String name;
+    private int studentId;
+    private String firstName;
+    private String lastName;
     private int age;
     private double grade;
-    private String studentID;
-    public Student(String name, int age, double grade, String studentID){
-        this.setName(name);
+
+    public Student(String firstName, String lastName, int age, double grade) {
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
         this.setAge(age);
         this.setGrade(grade);
-        this.setStudentID(studentID);
     }
-    public String getName(){
-        return name;
+
+    public Student(int studentId, String firstName, String lastName, int age, double grade) {
+        this.setStudentId(studentId);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setAge(age);
+        this.setGrade(grade);
     }
-    public void setName(String name) {
-        if (name != null && !name.isEmpty()) {
-            this.name = name;
+
+    public String getFirstName(){
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        if (firstName != null && !firstName.isEmpty()) {
+            this.firstName = firstName;
         }else {
-            throw new IllegalArgumentException("Imie nie moze byc puste");
+            throw new IllegalArgumentException("Pierwsze imię nie może być puste");
         }
     }
+
+    public String getLastName(){
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        if (lastName != null && !lastName.isEmpty()) {
+            this.lastName = lastName;
+        }else {
+            throw new IllegalArgumentException("Nazwisko nie moze byc puste");
+        }
+    }
+
     public int getAge() {
         return age;
     }
+
     public void setAge(int age) {
-        if (age > 0) {
+        if (age >= 18 && age <= 100) {
             this.age = age;
         }else {
-            throw new IllegalArgumentException("Wiek musi byc liczba dodatnia calkowita");
+            throw new IllegalArgumentException("Wiek musi byc liczba calkowita pomiedzy 18 i 100");
         }
     }
+
     public double getGrade(){
         return grade;
     }
+
     public void setGrade(double grade) {
-        if (grade >= 0.0 && grade <= 100.0){
+        if (grade >= 2.0 && grade <= 6.0){
             this.grade = grade;
         }else {
-            throw new IllegalArgumentException("Ocena musi byc w zakresie od 0  do 100");
+            throw new IllegalArgumentException("Ocena musi byc w zakresie od 2 do 6");
         }
-    }
-    public String getStudentID(){
-        return studentID;
-    }
-    public void setStudentID(String studentID){
-        if (studentID != null && !studentID.isEmpty()) {
-            this.studentID = studentID;
-        }else {
-            throw new IllegalArgumentException("ID studenta nie moze byc puste");
-        }
-    }
-    public void displayInfo() {
-        System.out.println("Imię: " + name);
-        System.out.println("Wiek: " + age);
-        System.out.println("Ocena: " + grade);
-        System.out.println("ID studenta: " + studentID);
     }
 
+    public int getStudentId(){
+        return studentId;
+    }
+
+    public void setStudentId(int studentId){
+        this.studentId = studentId;
+    }
+
+    public String getInfo() {
+        return "\n" + "Imię: " + firstName + "\n" +
+                "Nazwisko: " + lastName + "\n" +
+                "Wiek: " + age + "\n" +
+                "Ocena: " + grade + "\n" +
+                "Id studenta: " + studentId + "\n";
+    }
 }

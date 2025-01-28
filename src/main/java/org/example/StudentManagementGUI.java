@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.awt.Dimension;
 
 public class StudentManagementGUI extends JFrame {
-    private JTextField studentIDField, nameField, ageField, gradeField;
+    private JTextField studentIdField, firstNameField, lastNameField, ageField, gradeField;
     private JTextArea outputArea;
     private StudentManagerImpl manager;
 
     public StudentManagementGUI() {
         // Ustawienia okna
         setTitle("Student Management System");
-        setSize(1000, 600);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -25,33 +25,33 @@ public class StudentManagementGUI extends JFrame {
         inputPanel.setBorder(BorderFactory.createTitledBorder("Input Panel"));
 
         // Etykiety i pola tekstowe
-        inputPanel.add(new JLabel("Student ID:"));
-        studentIDField = new JTextField();
-        inputPanel.add(studentIDField);
+        inputPanel.add(new JLabel("Student Id:"));
+        studentIdField = new JTextField();
+        inputPanel.add(studentIdField);
 
-        inputPanel.add(new JLabel("Name:"));
-        nameField = new JTextField();
-        inputPanel.add(nameField);
+        inputPanel.add(new JLabel("Imię:"));
+        firstNameField = new JTextField();
+        inputPanel.add(firstNameField);
 
-        inputPanel.add(new JLabel("Age:"));
+        inputPanel.add(new JLabel("Nazwisko:"));
+        lastNameField = new JTextField();
+        inputPanel.add(lastNameField);
+
+        inputPanel.add(new JLabel("Wiek:"));
         ageField = new JTextField();
         inputPanel.add(ageField);
 
-        inputPanel.add(new JLabel("Grade:"));
+        inputPanel.add(new JLabel("Ocena:"));
         gradeField = new JTextField();
         inputPanel.add(gradeField);
 
         // Przyciski
-        JButton addButton = new JButton("Add Student");
-        addButton.setPreferredSize(new Dimension(50, 50));
-        JButton removeButton = new JButton("Remove Student");
-        addButton.setPreferredSize(new Dimension(50, 50));
-        JButton updateButton = new JButton("Update Student");
-        addButton.setPreferredSize(new Dimension(50, 50));
-        JButton displayButton = new JButton("Display All Students");
-        addButton.setPreferredSize(new Dimension(50, 50));
-        JButton calculateButton = new JButton("Calculate Average");
-        addButton.setPreferredSize(new Dimension(50, 50));
+
+        JButton addButton = new JButton("Dodaj studenta");
+        JButton removeButton = new JButton("Usuń studenta");
+        JButton updateButton = new JButton("Zaktualizuj studenta");
+        JButton displayButton = new JButton("Wyświetl wszystkich studentów");
+        JButton calculateButton = new JButton("Oblicz średnią ocen");
 
         // Dodawanie przycisków
         inputPanel.add(addButton);
@@ -83,40 +83,56 @@ public class StudentManagementGUI extends JFrame {
 
     private void addStudent() {
         try {
-            String id = studentIDField.getText();
-            String name = nameField.getText();
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
             int age = Integer.parseInt(ageField.getText());
-            double grade = Double.parseDouble(gradeField.getText());
+            double grade = getGrade(age);
 
-            if (age < 0 || grade < 0 || grade > 100) {
-                outputArea.setText("Error: Age must be positive and grade must be between 0.0 and 100.0");
-                return;
-            }
+            manager.addStudent(new Student(firstName, lastName, age, grade));
+            outputArea.setText("Dodanie studenta zakończone powodzeniem");
 
-            manager.addStudent(new Student(name, age, grade, id));
-            outputArea.setText("Student added successfully!");
-        } catch (NumberFormatException ex) {
-            outputArea.setText("Error: Invalid input. Please check the age and grade fields.");
+            firstNameField.setText("");
+            lastNameField.setText("");
+            ageField.setText("");
+            gradeField.setText("");
+        } catch (IllegalArgumentException ex) {
+            outputArea.setText(ex.toString());
         }
     }
 
+    private double getGrade(int age) {
+        double grade = Double.parseDouble(gradeField.getText());
+
+        if ((age < 18 || age > 100) && (grade < 2.0 || grade > 6.0)) {
+            throw new IllegalArgumentException("Błąd: Wiek musi być pomiędzy 18 a 100, oraz ocena musi być pomiędzy 2.0 i 6.0");
+        }
+        else if (age < 18 || age > 100){
+            throw new IllegalArgumentException("Błąd: Wiek musi być pomiędzy 18 a 100");
+        }
+        else if (grade < 2.0 || grade > 6.0){
+            throw new IllegalArgumentException("Błąd: Ocena musi być pomiędzy 2.0 i 6.0");
+        }
+        return grade;
+    }
+
     private void removeStudent() {
-        String id = studentIDField.getText();
-        manager.removeStudent(id);
-        outputArea.setText("Student with ID " + id + " removed (if existed).");
+        int studentId = Integer.parseInt(studentIdField.getText());
+        manager.removeStudent(studentId);
+        outputArea.setText("Student with ID " + studentId + " removed (if existed).");
     }
 
     private void updateStudent() {
-        String id = studentIDField.getText();
-        manager.updateStudent(id);
-        outputArea.setText("Student with ID " + id + " updated (if existed).");
+        int studentId = Integer.parseInt(studentIdField.getText());
+        Student student = manager.getStudent(studentId);
+        manager.updateStudent(student);
+        outputArea.setText("Student with ID " + studentId + " updated (if existed).");
     }
 
     private void displayAllStudents() {
-        ArrayList<Student> students = manager.displayAllStudents();
+        ArrayList<Student> students = manager.getAllStudents();
         StringBuilder output = new StringBuilder("All Students:\n");
         for (Student student : students) {
-            output.append(student.toString()).append("\n");
+            output.append(student.getInfo()).append("\n");
         }
         outputArea.setText(output.toString());
     }
