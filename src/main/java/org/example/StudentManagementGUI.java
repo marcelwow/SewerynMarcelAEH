@@ -21,29 +21,11 @@ public class StudentManagementGUI extends JFrame {
         manager = new StudentManagerImpl();
 
         // Panel wejściowy
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2, 5, 5));
+        JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Input Panel"));
 
-        // Etykiety i pola tekstowe
-        inputPanel.add(new JLabel("Student Id:"));
-        studentIdField = new JTextField();
-        inputPanel.add(studentIdField);
-
-        inputPanel.add(new JLabel("Imię:"));
-        firstNameField = new JTextField();
-        inputPanel.add(firstNameField);
-
-        inputPanel.add(new JLabel("Nazwisko:"));
-        lastNameField = new JTextField();
-        inputPanel.add(lastNameField);
-
-        inputPanel.add(new JLabel("Wiek:"));
-        ageField = new JTextField();
-        inputPanel.add(ageField);
-
-        inputPanel.add(new JLabel("Ocena:"));
-        gradeField = new JTextField();
-        inputPanel.add(gradeField);
+        // Panel dla pól formularza
+        JPanel formPanel = new JPanel(new GridLayout(5, 2, 5, 10)); // 5 rzędów dla 5 par label-pole
 
         // Przyciski
 
@@ -53,12 +35,39 @@ public class StudentManagementGUI extends JFrame {
         JButton displayButton = new JButton("Wyświetl wszystkich studentów");
         JButton calculateButton = new JButton("Oblicz średnią ocen");
 
-        // Dodawanie przycisków
-        inputPanel.add(addButton);
-        inputPanel.add(removeButton);
-        inputPanel.add(updateButton);
-        inputPanel.add(displayButton);
-        inputPanel.add(calculateButton);
+        studentIdField = new JTextField();
+        firstNameField = new JTextField();
+        lastNameField = new JTextField();
+        ageField = new JTextField();
+        gradeField = new JTextField();
+
+        // Dodawanie etykiet i pól tekstowych do formPanel
+        formPanel.add(new JLabel("Student Id:"));
+        formPanel.add(studentIdField);
+
+        formPanel.add(new JLabel("Imię:"));
+        formPanel.add(firstNameField);
+
+        formPanel.add(new JLabel("Nazwisko:"));
+        formPanel.add(lastNameField);
+
+        formPanel.add(new JLabel("Wiek:"));
+        formPanel.add(ageField);
+
+        formPanel.add(new JLabel("Ocena:"));
+        formPanel.add(gradeField);
+
+        // Panel dla przycisków
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(addButton);
+        buttonPanel.add(removeButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(displayButton);
+        buttonPanel.add(calculateButton);
+
+        // Dodawanie paneli do głównego panelu wejściowego
+        inputPanel.add(formPanel, BorderLayout.CENTER);
+        inputPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Panel wyjściowy
         JPanel outputPanel = new JPanel(new BorderLayout());
@@ -91,10 +100,7 @@ public class StudentManagementGUI extends JFrame {
             manager.addStudent(new Student(firstName, lastName, age, grade));
             outputArea.setText("Dodanie studenta zakończone powodzeniem");
 
-            firstNameField.setText("");
-            lastNameField.setText("");
-            ageField.setText("");
-            gradeField.setText("");
+            cleanUpInputFields();
         } catch (IllegalArgumentException ex) {
             outputArea.setText(ex.toString());
         }
@@ -119,13 +125,26 @@ public class StudentManagementGUI extends JFrame {
         int studentId = Integer.parseInt(studentIdField.getText());
         manager.removeStudent(studentId);
         outputArea.setText("Student with ID " + studentId + " removed (if existed).");
+        cleanUpInputFields();
     }
 
     private void updateStudent() {
         int studentId = Integer.parseInt(studentIdField.getText());
         Student student = manager.getStudent(studentId);
+
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
+        int age = Integer.parseInt(ageField.getText());
+        double grade = getGrade(age);
+
+        student.setFirstName(firstName);
+        student.setLastName(lastName);
+        student.setAge(age);
+        student.setGrade(grade);
+
         manager.updateStudent(student);
         outputArea.setText("Student with ID " + studentId + " updated (if existed).");
+        cleanUpInputFields();
     }
 
     private void displayAllStudents() {
@@ -142,11 +161,12 @@ public class StudentManagementGUI extends JFrame {
         outputArea.setText("Average Grade: " + average);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            StudentManagementGUI gui = new StudentManagementGUI();
-            gui.setVisible(true);
-        });
+    private void cleanUpInputFields(){
+        studentIdField.setText("");
+        firstNameField.setText("");
+        lastNameField.setText("");
+        ageField.setText("");
+        gradeField.setText("");
     }
 }
 
