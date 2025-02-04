@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.awt.Dimension;
 
 public class StudentManagementGUI extends JFrame {
     private JTextField studentIdField, firstNameField, lastNameField, ageField, gradeField;
@@ -19,19 +20,35 @@ public class StudentManagementGUI extends JFrame {
         // Inicjalizacja managera studentów
         manager = new StudentManagerImpl();
 
+        Color backgroundColor = Color.decode("#565675");
+        Color buttonColor = Color.decode("#10B981");
+        Color outputColor = Color.decode("#bfa4a4");
+        Color buttonColor1 = Color.decode("#f70505");
+
         // Panel wejściowy
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Input Panel"));
+        inputPanel.setBackground(backgroundColor);
 
         // Panel dla pól formularza
         JPanel formPanel = new JPanel(new GridLayout(5, 2, 5, 10)); // 5 rzędów dla 5 par label-pole
+        inputPanel.setBackground(backgroundColor);
+
 
         // Przyciski
+
         JButton addButton = new JButton("Dodaj studenta");
         JButton removeButton = new JButton("Usuń studenta");
         JButton updateButton = new JButton("Zaktualizuj studenta");
         JButton displayButton = new JButton("Wyświetl wszystkich studentów");
         JButton calculateButton = new JButton("Oblicz średnią ocen");
+
+        addButton.setBackground(buttonColor);
+        removeButton.setBackground(buttonColor1);
+        updateButton.setBackground(buttonColor);
+        displayButton.setBackground(buttonColor);
+        calculateButton.setBackground(buttonColor);
+
 
         studentIdField = new JTextField();
         firstNameField = new JTextField();
@@ -57,11 +74,12 @@ public class StudentManagementGUI extends JFrame {
 
         // Panel dla przycisków
         JPanel buttonPanel = new JPanel(new FlowLayout());
+
         buttonPanel.add(addButton);
-        buttonPanel.add(removeButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(displayButton);
         buttonPanel.add(calculateButton);
+        buttonPanel.add(removeButton);
 
         // Dodawanie paneli do głównego panelu wejściowego
         inputPanel.add(formPanel, BorderLayout.CENTER);
@@ -70,6 +88,7 @@ public class StudentManagementGUI extends JFrame {
         // Panel wyjściowy
         JPanel outputPanel = new JPanel(new BorderLayout());
         outputPanel.setBorder(BorderFactory.createTitledBorder("Output Panel"));
+        formPanel.setBackground(backgroundColor);
 
         outputArea = new JTextArea();
         outputArea.setEditable(false);
