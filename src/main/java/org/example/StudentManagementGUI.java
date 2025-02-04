@@ -3,7 +3,6 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.awt.Dimension;
 
 public class StudentManagementGUI extends JFrame {
     private JTextField studentIdField, firstNameField, lastNameField, ageField, gradeField;
@@ -11,31 +10,24 @@ public class StudentManagementGUI extends JFrame {
     private StudentManagerImpl manager;
 
     public StudentManagementGUI() {
-        // Ustawienia okna
         setTitle("Student Management System");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Inicjalizacja managera studentów
         manager = new StudentManagerImpl();
 
         Color backgroundColor = Color.decode("#565675");
         Color buttonColor = Color.decode("#10B981");
-        Color outputColor = Color.decode("#bfa4a4");
         Color buttonColor1 = Color.decode("#f70505");
+        Color outputColor = Color.decode("#bfa4a4");
 
-        // Panel wejściowy
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Input Panel"));
         inputPanel.setBackground(backgroundColor);
 
-        // Panel dla pól formularza
-        JPanel formPanel = new JPanel(new GridLayout(5, 2, 5, 10)); // 5 rzędów dla 5 par label-pole
-        inputPanel.setBackground(backgroundColor);
-
-
-        // Przyciski
+        JPanel formPanel = new JPanel(new GridLayout(5, 2, 5, 10));
+        formPanel.setBackground(backgroundColor);
 
         JButton addButton = new JButton("Dodaj studenta");
         JButton removeButton = new JButton("Usuń studenta");
@@ -49,57 +41,48 @@ public class StudentManagementGUI extends JFrame {
         displayButton.setBackground(buttonColor);
         calculateButton.setBackground(buttonColor);
 
-
         studentIdField = new JTextField();
         firstNameField = new JTextField();
         lastNameField = new JTextField();
         ageField = new JTextField();
         gradeField = new JTextField();
 
-        // Dodawanie etykiet i pól tekstowych do formPanel
         formPanel.add(new JLabel("Student Id:"));
         formPanel.add(studentIdField);
-
         formPanel.add(new JLabel("Imię:"));
         formPanel.add(firstNameField);
-
         formPanel.add(new JLabel("Nazwisko:"));
         formPanel.add(lastNameField);
-
         formPanel.add(new JLabel("Wiek:"));
         formPanel.add(ageField);
-
         formPanel.add(new JLabel("Ocena:"));
         formPanel.add(gradeField);
 
-        // Panel dla przycisków
         JPanel buttonPanel = new JPanel(new FlowLayout());
-
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(displayButton);
         buttonPanel.add(calculateButton);
         buttonPanel.add(removeButton);
 
-        // Dodawanie paneli do głównego panelu wejściowego
         inputPanel.add(formPanel, BorderLayout.CENTER);
         inputPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Panel wyjściowy
         JPanel outputPanel = new JPanel(new BorderLayout());
         outputPanel.setBorder(BorderFactory.createTitledBorder("Output Panel"));
-        formPanel.setBackground(backgroundColor);
+        outputPanel.setBackground(backgroundColor);
 
         outputArea = new JTextArea();
         outputArea.setEditable(false);
+        outputArea.setBackground(outputColor);
+        outputArea.setFont(new Font("Arial", Font.BOLD, 14));
+
         JScrollPane scrollPane = new JScrollPane(outputArea);
         outputPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Dodanie paneli do głównego okna
         add(inputPanel, BorderLayout.NORTH);
         add(outputPanel, BorderLayout.CENTER);
 
-        // Obsługa zdarzeń
         addButton.addActionListener(e -> addStudent());
         removeButton.addActionListener(e -> removeStudent());
         updateButton.addActionListener(e -> updateStudent());
@@ -113,26 +96,21 @@ public class StudentManagementGUI extends JFrame {
             String lastName = lastNameField.getText();
             int age = Integer.parseInt(ageField.getText());
             double grade = getGrade(age);
-
             manager.addStudent(new Student(firstName, lastName, age, grade));
-            outputArea.setText("Dodanie studenta zakończone powodzeniem");
-
+            displaySuccess("Dodanie studenta zakończone powodzeniem");
             cleanUpInputFields();
         } catch (IllegalArgumentException ex) {
-            outputArea.setText(ex.toString());
+            displayError(ex.getMessage());
         }
     }
 
     private double getGrade(int age) {
         double grade = Double.parseDouble(gradeField.getText());
-
         if ((age < 18 || age > 100) && (grade < 2.0 || grade > 6.0)) {
-            throw new IllegalArgumentException("Błąd: Wiek musi być pomiędzy 18 a 100, oraz ocena musi być pomiędzy 2.0 i 6.0");
-        }
-        else if (age < 18 || age > 100){
+            throw new IllegalArgumentException("Błąd: Wiek musi być 18-100, ocena 2.0-6.0");
+        } else if (age < 18 || age > 100) {
             throw new IllegalArgumentException("Błąd: Wiek musi być pomiędzy 18 a 100");
-        }
-        else if (grade < 2.0 || grade > 6.0){
+        } else if (grade < 2.0 || grade > 6.0) {
             throw new IllegalArgumentException("Błąd: Ocena musi być pomiędzy 2.0 i 6.0");
         }
         return grade;
@@ -141,44 +119,56 @@ public class StudentManagementGUI extends JFrame {
     private void removeStudent() {
         int studentId = Integer.parseInt(studentIdField.getText());
         manager.removeStudent(studentId);
-        outputArea.setText("Student with ID " + studentId + " removed (if existed).");
+        displayInfo("Student z ID " + studentId + " został usunięty (jeśli istniał).");
         cleanUpInputFields();
     }
 
     private void updateStudent() {
         int studentId = Integer.parseInt(studentIdField.getText());
         Student student = manager.getStudent(studentId);
-
-        String firstName = firstNameField.getText();
-        String lastName = lastNameField.getText();
-        int age = Integer.parseInt(ageField.getText());
-        double grade = getGrade(age);
-
-        student.setFirstName(firstName);
-        student.setLastName(lastName);
-        student.setAge(age);
-        student.setGrade(grade);
-
+        if (student == null) {
+            displayError("Student o podanym ID nie istnieje.");
+            return;
+        }
+        student.setFirstName(firstNameField.getText());
+        student.setLastName(lastNameField.getText());
+        student.setAge(Integer.parseInt(ageField.getText()));
+        student.setGrade(getGrade(student.getAge()));
         manager.updateStudent(student);
-        outputArea.setText("Student with ID " + studentId + " updated (if existed).");
+        displaySuccess("Student z ID " + studentId + " został zaktualizowany.");
         cleanUpInputFields();
     }
 
     private void displayAllStudents() {
         ArrayList<Student> students = manager.getAllStudents();
-        StringBuilder output = new StringBuilder("All Students:\n");
+        StringBuilder output = new StringBuilder("Lista studentów:\n");
         for (Student student : students) {
             output.append(student.getInfo()).append("\n");
         }
-        outputArea.setText(output.toString());
+        displayInfo(output.toString());
     }
 
     private void calculateAverage() {
         double average = manager.calculateAverageGrade();
-        outputArea.setText("Average Grade: " + average);
+        displayInfo("Średnia ocen: " + average);
     }
 
-    private void cleanUpInputFields(){
+    private void displaySuccess(String message) {
+        outputArea.setForeground(Color.GREEN);
+        outputArea.setText(message);
+    }
+
+    private void displayError(String message) {
+        outputArea.setForeground(Color.RED);
+        outputArea.setText(message);
+    }
+
+    private void displayInfo(String message) {
+        outputArea.setForeground(Color.BLUE);
+        outputArea.setText(message);
+    }
+
+    private void cleanUpInputFields() {
         studentIdField.setText("");
         firstNameField.setText("");
         lastNameField.setText("");
@@ -186,4 +176,3 @@ public class StudentManagementGUI extends JFrame {
         gradeField.setText("");
     }
 }
-
